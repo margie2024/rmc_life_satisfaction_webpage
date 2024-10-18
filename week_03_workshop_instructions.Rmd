@@ -2,8 +2,10 @@
 title: "Workshop 3 Instructions"
 subtitle: "Interactive Plots and Web Publishing with RMarkdown"
 author: "The GRAPH Courses Team"
-output: prettydoc::html_pretty
+output: html
 ---
+
+##  prettydoc::html_pretty
 
 # Introduction
 
@@ -54,7 +56,7 @@ In the "🔢 Table" section, you will create a table similar to the one on the O
 -   `2023`
 
 -   Absolute change
-
+op./
 -   Relative change
 
 To accomplish this, you should:

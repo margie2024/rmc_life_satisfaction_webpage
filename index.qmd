@@ -1,9 +1,10 @@
 ---
 title: "Self-reported life satisfaction, 2011 to 2023"
 subtitle: "Replicating the Our World in Data Grapher"
-author: "YOUR NAME HERE" # Remember to add your name!
+author: "Margaret Nagawa" # Remember to add your name!
 date: "16-10-2024"
 theme: united
+format: html
 ---
 
 <!-- Custom HTML to add logo [DO NOT EDIT THIS SECTION] -->
@@ -35,6 +36,7 @@ pacman::p_load(plotly, tidyverse, reactable, here, scales)
 cantril <- 
   read_csv(here("data/happiness-cantril-ladder.csv")) %>% 
   rename(Country = Entity)
+view(cantril)
 ```
 
 ### Happiness across the world over time
@@ -45,6 +47,7 @@ The main life evaluation question asked in the poll is the Cantril Life Ladder q
 
 > “Please imagine a ladder, with steps numbered from 0 at the bottom to 10 at the top. The top of the ladder represents the best possible life for you and the bottom of the ladder represents the worst possible life for you. On which step of the ladder would you say you personally feel you stand at this time?”
 
+:::{.panel-tabset}
 
 ## 🔢 Table
 
@@ -57,7 +60,22 @@ The main life evaluation question asked in the poll is the Cantril Life Ladder q
 
 # Create table
 
-"WRITE_YOUR_CODE_HERE"
+cantril_filter<-cantril%>% 
+  filter(Year%in% c(2011,2023))
+
+view(cantril_filter)
+
+cantril_wider<-pivot_wider(cantril_filter,names_from = Year,values_from = "Cantril ladder score") 
+
+view(cantril_wider)
+
+hap_table<-cantril_wider %>% select(Country,`2011`,`2023`)%>% 
+  mutate(absolute_change= `2023`-`2011`,
+relative_change=((`2023`-`2011`)/`2011`) *100)
+
+reactable (hap_table)
+
+
 ```
 
 
@@ -107,8 +125,20 @@ cantril %>%
 # Note that your chart will not have the ability to filter countries like the one on the Our World in Data page.
 
 # Create line chart
-"WRITE_YOUR_CODE_HERE"
+cantril_filter<-cantril %>% 
+filter(Country %in% c("Uganda","Ghana","Iran", "Indonesia","Guinea"))
+       
+       
+hp_plot<-ggplot(cantril_filter,aes(x= Year,y=`Cantril ladder score`,col=Country))+
+  geom_line()+
+  scale_y_continuous(limits = c(0,10))+
+  labs(title="line Graph showing happiness for selected countries",x="year",y="Cantril Ladder Score")+
+  theme_minimal()
+
+ggplotly(hp_plot)
+
 ```
+:::
 
 ## 📈 Advanced Chart
 
@@ -139,7 +169,7 @@ cantril_plotly <- plot_ly(
 
 country_filter <- filter_select(
   "country_filter", 
-  "Select a country to examine", 
+  "Uganda", 
   shared_cantril_data, 
   ~Country, 
   multiple = TRUE
@@ -150,6 +180,7 @@ bscols(
   list(country_filter, cantril_plotly)
 )
 ```
+
 
 <!-- Custom javascript to set default values in the filter: -->
 <script>
@@ -165,3 +196,5 @@ window.onload = filter_default;
 Data source: World Happiness Report
 
 [OurWorldInData.org/happiness-and-life-satisfaction](https://ourworldindata.org/grapher/happiness-cantril-ladder) | CC BY
+
+
